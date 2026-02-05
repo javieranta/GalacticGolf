@@ -240,6 +240,11 @@ export const HUD: React.FC = () => {
       {isDragging && (
         <div className="absolute inset-0 pointer-events-none border-4 border-green-500/50 animate-pulse" />
       )}
+
+      {/* Version number */}
+      <div className="absolute bottom-4 right-4 pointer-events-none">
+        <div className="text-white/30 text-xs font-mono">v1.1.0</div>
+      </div>
     </div>
   );
 };
