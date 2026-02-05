@@ -166,23 +166,24 @@ describe('Simulation Scenarios', () => {
   it('should trigger deep space rescue for escape trajectory', () => {
     const hole = HOLES[0];
 
-    // Very high velocity directly away from sun
-    const startDist = magnitude(hole.startPositionMeters);
-    const escapeSpeed = Math.sqrt(2 * 1.32712440018e20 / startDist) * 1.5; // 1.5x escape velocity
+    // Start ball very close to deep space threshold (149 AU vs rescue at 150 AU)
+    // With high outward velocity, should cross 150 AU quickly
+    const startDist = 149 * AU;
+    const escapeSpeed = 50000; // 50 km/s outward - fast enough to escape
 
-    const direction = {
-      x: hole.startPositionMeters.x / startDist,
-      y: hole.startPositionMeters.y / startDist,
-      z: 0,
+    // Create a modified hole with starting position at 149 AU
+    const modifiedHole: HoleDef = {
+      ...hole,
+      startPositionMeters: { x: startDist, y: 0, z: 0 },
     };
 
     const velocity = {
-      x: direction.x * escapeSpeed,
-      y: direction.y * escapeSpeed,
+      x: escapeSpeed, // Outward from sun (positive x)
+      y: 0,
       z: 0,
     };
 
-    const result = runSimulation(hole, velocity, 50000);
+    const result = runSimulation(modifiedHole, velocity, 50000);
 
     // Should trigger deep space or bounds fail
     expect(['deep_space', 'bounds_fail']).toContain(result.outcome);
@@ -191,17 +192,23 @@ describe('Simulation Scenarios', () => {
   it('should trigger sun fail for high speed toward sun', () => {
     const hole = HOLES[0];
 
-    // High velocity toward sun
-    const startDist = magnitude(hole.startPositionMeters);
-    const speed = 80000; // 80 km/s
+    // Start ball closer to sun (0.5 AU) so it can reach sun in reasonable sim time
+    const startDist = 0.5 * AU;
+    const speed = 100000; // 100 km/s toward sun
+
+    // Create a modified hole with starting position closer to sun
+    const modifiedHole: HoleDef = {
+      ...hole,
+      startPositionMeters: { x: startDist, y: 0, z: 0 },
+    };
 
     const velocity = {
-      x: (-hole.startPositionMeters.x / startDist) * speed,
-      y: (-hole.startPositionMeters.y / startDist) * speed,
+      x: -speed, // Toward sun (negative x)
+      y: 0,
       z: 0,
     };
 
-    const result = runSimulation(hole, velocity, 20000);
+    const result = runSimulation(modifiedHole, velocity, 20000);
 
     expect(result.outcome).toBe('sun_fail');
   });
