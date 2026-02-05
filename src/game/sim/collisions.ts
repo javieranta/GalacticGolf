@@ -33,10 +33,10 @@ export type CollisionResult =
 
 /**
  * Compute generous capture radius for target planet
- * targetCaptureRadiusMeters = max(1.6 * targetRadius, targetRadius + 15_000_000)
+ * Much larger capture zones for arcade-style gameplay
  */
 export function getTargetCaptureRadius(targetPlanet: CelestialBody): number {
-  return Math.max(1.6 * targetPlanet.radius, targetPlanet.radius + 15_000_000);
+  return Math.max(3.0 * targetPlanet.radius, targetPlanet.radius + 50_000_000);
 }
 
 /**

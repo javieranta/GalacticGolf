@@ -21,7 +21,7 @@ export interface HoleDef {
 }
 
 // Speed hints in m/s (divide by 1000 to get km/s)
-// 100,000 m/s = 100 km/s, 500,000 m/s = 500 km/s
+// Boosted 5x for faster, more exciting gameplay
 export const HOLES: HoleDef[] = [
   {
     id: 1,
@@ -35,7 +35,7 @@ export const HOLES: HoleDef[] = [
       y: 20 * AU,
       z: 0,
     },
-    speedHint: { min: 100_000, max: 400_000, recommended: 200_000 }, // 100-400 km/s
+    speedHint: { min: 500_000, max: 2_000_000, recommended: 1_000_000 }, // 500-2000 km/s
     cameraHint: 'BALL',
   },
   {
@@ -49,7 +49,7 @@ export const HOLES: HoleDef[] = [
       y: -25 * AU,
       z: 0,
     },
-    speedHint: { min: 120_000, max: 450_000, recommended: 250_000 },
+    speedHint: { min: 600_000, max: 2_250_000, recommended: 1_250_000 },
     cameraHint: 'BALL',
   },
   {
@@ -63,7 +63,7 @@ export const HOLES: HoleDef[] = [
       y: 30 * AU,
       z: 0,
     },
-    speedHint: { min: 80_000, max: 350_000, recommended: 180_000 },
+    speedHint: { min: 400_000, max: 1_750_000, recommended: 900_000 },
     cameraHint: 'BALL',
   },
   {
@@ -77,7 +77,7 @@ export const HOLES: HoleDef[] = [
       y: 35 * AU,
       z: 0,
     },
-    speedHint: { min: 100_000, max: 400_000, recommended: 220_000 },
+    speedHint: { min: 500_000, max: 2_000_000, recommended: 1_100_000 },
     cameraHint: 'BALL',
   },
   {
@@ -91,7 +91,7 @@ export const HOLES: HoleDef[] = [
       y: -50 * AU,
       z: 0,
     },
-    speedHint: { min: 120_000, max: 500_000, recommended: 280_000 },
+    speedHint: { min: 600_000, max: 2_500_000, recommended: 1_400_000 },
     cameraHint: 'BALL',
   },
   {
@@ -105,7 +105,7 @@ export const HOLES: HoleDef[] = [
       y: -20 * AU,
       z: 0,
     },
-    speedHint: { min: 90_000, max: 380_000, recommended: 200_000 },
+    speedHint: { min: 450_000, max: 1_900_000, recommended: 1_000_000 },
     cameraHint: 'BALL',
   },
   {
@@ -119,7 +119,7 @@ export const HOLES: HoleDef[] = [
       y: 40 * AU,
       z: 0,
     },
-    speedHint: { min: 140_000, max: 550_000, recommended: 320_000 },
+    speedHint: { min: 700_000, max: 2_750_000, recommended: 1_600_000 },
     cameraHint: 'BALL',
   },
   {
@@ -133,7 +133,7 @@ export const HOLES: HoleDef[] = [
       y: -35 * AU,
       z: 0,
     },
-    speedHint: { min: 160_000, max: 600_000, recommended: 360_000 },
+    speedHint: { min: 800_000, max: 3_000_000, recommended: 1_800_000 },
     cameraHint: 'BALL',
   },
   {
@@ -147,7 +147,7 @@ export const HOLES: HoleDef[] = [
       y: 90 * AU,
       z: 5 * AU,
     },
-    speedHint: { min: 200_000, max: 800_000, recommended: 500_000 },
+    speedHint: { min: 1_000_000, max: 4_000_000, recommended: 2_500_000 },
     cameraHint: 'BALL',
   },
 ];
