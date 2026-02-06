@@ -233,10 +233,10 @@ export class GameScene {
       
       // Create unique texture for each planet
       const texture = this.createPlanetTexture(name);
-      const material = new THREE.MeshStandardMaterial({
+      // Use MeshBasicMaterial so planets are ALWAYS visible (self-illuminating)
+      // MeshStandardMaterial was making them dark because they're far from the Sun light
+      const material = new THREE.MeshBasicMaterial({
         map: texture,
-        roughness: 0.7,
-        metalness: 0.1,
       });
 
       const mesh = new THREE.Mesh(geometry, material);
