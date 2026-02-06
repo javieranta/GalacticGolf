@@ -64,6 +64,9 @@ export const MIN_TIME_SCALE = 1_000_000;
 export const MAX_TIME_SCALE = 15_000_000;
 export const DEFAULT_TIME_SCALE = 5_000_000; // Faster for more action!
 
+// Slower time scale for aiming phase - planets orbit gently while you aim
+export const AIMING_TIME_SCALE = 100_000; // 50x slower than default
+
 // Simulation timestep bounds (in sim seconds per frame)
 // Higher values = faster simulation but less accurate
 export const MIN_DT_SIM = 100;
