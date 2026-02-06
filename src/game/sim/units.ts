@@ -60,12 +60,10 @@ export const ATTEMPT_TIMEOUT_REAL_SECONDS = 90;
 
 // Time scale bounds (sim seconds per real second)
 // At 1M scale, 1 real second = ~11.5 days of sim time
-export const MIN_TIME_SCALE = 1_000_000;
-export const MAX_TIME_SCALE = 15_000_000;
-export const DEFAULT_TIME_SCALE = 5_000_000; // Faster for more action!
-
-// Slower time scale for aiming phase - planets orbit gently while you aim
-export const AIMING_TIME_SCALE = 100_000; // 50x slower than default
+// Time scale range - user can adjust via slider
+export const MIN_TIME_SCALE = 50_000;
+export const MAX_TIME_SCALE = 2_000_000;
+export const DEFAULT_TIME_SCALE = 100_000; // Same speed before and after launch
 
 // Simulation timestep bounds (in sim seconds per frame)
 // Higher values = faster simulation but less accurate

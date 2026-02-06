@@ -23,7 +23,6 @@ import {
   MIN_DT_SIM,
   MAX_DT_SIM,
   ATTEMPT_TIMEOUT_REAL_SECONDS,
-  AIMING_TIME_SCALE,
 } from './sim/units';
 
 export type GamePhase = 'aiming' | 'simulating' | 'success' | 'fail' | 'scorecard';
@@ -240,9 +239,9 @@ export class Game {
       this.updateSimulation(realDt);
     } else if (this.state.phase === 'aiming') {
       this.updateAiming();
-      // Advance simTime during aiming at a gentler pace
-      // Planets orbit slowly while you aim, then speed up during flight
-      this.simTime += realDt * AIMING_TIME_SCALE;
+      // Advance simTime during aiming at the SAME time scale as simulation
+      // User can adjust via the Time Scale slider in the top right
+      this.simTime += realDt * this.state.timeScale;
     }
 
     // Always update planet positions for display
