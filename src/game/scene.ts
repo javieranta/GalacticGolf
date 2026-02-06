@@ -229,16 +229,25 @@ export class GameScene {
       const planet = PLANETS[name];
       const renderRadius = this.getBodyRenderRadius(planet);
 
-      const geometry = new THREE.SphereGeometry(renderRadius, 24, 24);
+      const geometry = new THREE.SphereGeometry(renderRadius, 48, 48);
+      
+      // Create unique texture for each planet
+      const texture = this.createPlanetTexture(name);
       const material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(planet.color),
-        roughness: 0.8,
+        map: texture,
+        roughness: 0.7,
         metalness: 0.1,
       });
 
       const mesh = new THREE.Mesh(geometry, material);
       this.scene.add(mesh);
       this.planetMeshes.set(name, mesh);
+
+      // Add atmosphere glow for planets with atmospheres
+      if (['Earth', 'Venus', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'].includes(name)) {
+        const atmosphereGlow = this.createAtmosphereGlow(renderRadius, planet.color);
+        mesh.add(atmosphereGlow);
+      }
 
       // Add GLOW SPRITE to every planet for visibility at any distance
       const glowMaterial = new THREE.SpriteMaterial({
@@ -247,28 +256,339 @@ export class GameScene {
         blending: THREE.AdditiveBlending,
       });
       const glow = new THREE.Sprite(glowMaterial);
-      // Glow is 4x the planet size for visibility
       glow.scale.set(renderRadius * 4, renderRadius * 4, 1);
       mesh.add(glow);
 
-      // Add rings for Saturn
+      // Add rings for Saturn and Uranus
       if (name === 'Saturn') {
-        const ringGeometry = new THREE.RingGeometry(
-          renderRadius * 1.4,
-          renderRadius * 2.2,
-          64
-        );
-        const ringMaterial = new THREE.MeshBasicMaterial({
-          color: 0xd4a574,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.6,
-        });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-        ring.rotation.x = Math.PI / 2;
-        mesh.add(ring);
+        this.addSaturnRings(mesh, renderRadius);
+      } else if (name === 'Uranus') {
+        this.addUranusRings(mesh, renderRadius);
       }
     }
+  }
+
+  private createPlanetTexture(name: PlanetName): THREE.Texture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d')!;
+
+    switch (name) {
+      case 'Mercury':
+        this.drawMercuryTexture(ctx);
+        break;
+      case 'Venus':
+        this.drawVenusTexture(ctx);
+        break;
+      case 'Earth':
+        this.drawEarthTexture(ctx);
+        break;
+      case 'Mars':
+        this.drawMarsTexture(ctx);
+        break;
+      case 'Jupiter':
+        this.drawJupiterTexture(ctx);
+        break;
+      case 'Saturn':
+        this.drawSaturnTexture(ctx);
+        break;
+      case 'Uranus':
+        this.drawUranusTexture(ctx);
+        break;
+      case 'Neptune':
+        this.drawNeptuneTexture(ctx);
+        break;
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    return texture;
+  }
+
+  private drawMercuryTexture(ctx: CanvasRenderingContext2D): void {
+    // Gray cratered surface
+    const gradient = ctx.createLinearGradient(0, 0, 512, 256);
+    gradient.addColorStop(0, '#8a8a8a');
+    gradient.addColorStop(0.5, '#6e6e6e');
+    gradient.addColorStop(1, '#5a5a5a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Add craters
+    for (let i = 0; i < 60; i++) {
+      const x = Math.random() * 512;
+      const y = Math.random() * 256;
+      const r = 3 + Math.random() * 15;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(80, 80, 80, ${0.3 + Math.random() * 0.4})`;
+      ctx.fill();
+      // Crater rim
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(120, 120, 120, 0.5)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  private drawVenusTexture(ctx: CanvasRenderingContext2D): void {
+    // Yellowish clouds with swirls
+    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, '#e8d5a3');
+    gradient.addColorStop(0.3, '#d4c08a');
+    gradient.addColorStop(0.7, '#c9b07a');
+    gradient.addColorStop(1, '#bfa06a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Cloud bands
+    for (let i = 0; i < 8; i++) {
+      const y = i * 32 + Math.random() * 20;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x < 512; x += 20) {
+        ctx.lineTo(x, y + Math.sin(x * 0.02) * 10);
+      }
+      ctx.strokeStyle = `rgba(200, 180, 140, ${0.3 + Math.random() * 0.3})`;
+      ctx.lineWidth = 8 + Math.random() * 12;
+      ctx.stroke();
+    }
+  }
+
+  private drawEarthTexture(ctx: CanvasRenderingContext2D): void {
+    // Ocean base
+    ctx.fillStyle = '#1a5f8a';
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Continents - simplified shapes
+    ctx.fillStyle = '#3d7a3d';
+    
+    // North America
+    ctx.beginPath();
+    ctx.ellipse(100, 80, 60, 50, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // South America
+    ctx.beginPath();
+    ctx.ellipse(130, 180, 30, 50, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Europe/Africa
+    ctx.beginPath();
+    ctx.ellipse(270, 100, 35, 40, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(280, 170, 40, 55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Asia
+    ctx.beginPath();
+    ctx.ellipse(380, 80, 80, 50, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Australia
+    ctx.beginPath();
+    ctx.ellipse(430, 190, 35, 25, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Ice caps
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 512, 20);
+    ctx.fillRect(0, 236, 512, 20);
+    
+    // Clouds
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * 512;
+      const y = 30 + Math.random() * 196;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 30 + Math.random() * 40, 10 + Math.random() * 15, Math.random(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  private drawMarsTexture(ctx: CanvasRenderingContext2D): void {
+    // Red/orange base
+    const gradient = ctx.createLinearGradient(0, 0, 512, 256);
+    gradient.addColorStop(0, '#c1440e');
+    gradient.addColorStop(0.5, '#a33c0e');
+    gradient.addColorStop(1, '#8b3008');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Darker regions (maria)
+    ctx.fillStyle = 'rgba(100, 40, 20, 0.5)';
+    ctx.beginPath();
+    ctx.ellipse(200, 120, 80, 40, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(400, 150, 60, 50, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Polar ice caps
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.beginPath();
+    ctx.ellipse(256, 10, 100, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(256, 246, 80, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Olympus Mons (large volcano)
+    ctx.fillStyle = 'rgba(150, 80, 50, 0.6)';
+    ctx.beginPath();
+    ctx.arc(150, 100, 25, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  private drawJupiterTexture(ctx: CanvasRenderingContext2D): void {
+    // Base color
+    ctx.fillStyle = '#d4a574';
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Horizontal bands
+    const bandColors = ['#c9a06a', '#e8c896', '#a87d50', '#d4b08a', '#8b6340', '#c4956a'];
+    let y = 0;
+    for (let i = 0; i < 12; i++) {
+      const height = 15 + Math.random() * 25;
+      ctx.fillStyle = bandColors[i % bandColors.length];
+      ctx.fillRect(0, y, 512, height);
+      y += height;
+    }
+    
+    // Great Red Spot
+    ctx.fillStyle = '#c85a3a';
+    ctx.beginPath();
+    ctx.ellipse(350, 140, 40, 25, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#a84828';
+    ctx.beginPath();
+    ctx.ellipse(350, 140, 25, 15, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Storm swirls
+    for (let i = 0; i < 20; i++) {
+      const x = Math.random() * 512;
+      const y = Math.random() * 256;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 5 + Math.random() * 15, 3 + Math.random() * 8, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 160, 120, ${0.2 + Math.random() * 0.3})`;
+      ctx.fill();
+    }
+  }
+
+  private drawSaturnTexture(ctx: CanvasRenderingContext2D): void {
+    // Pale yellow base
+    ctx.fillStyle = '#e8d8a8';
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Subtle horizontal bands
+    const bandColors = ['#dcc890', '#f0e8c0', '#c8b878', '#e0d0a0', '#d0c088'];
+    let y = 0;
+    for (let i = 0; i < 10; i++) {
+      const height = 20 + Math.random() * 30;
+      ctx.fillStyle = bandColors[i % bandColors.length];
+      ctx.fillRect(0, y, 512, height);
+      y += height;
+    }
+  }
+
+  private drawUranusTexture(ctx: CanvasRenderingContext2D): void {
+    // Cyan/teal gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, '#7de3f4');
+    gradient.addColorStop(0.5, '#5ac8dc');
+    gradient.addColorStop(1, '#4ab8cc');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Subtle bands
+    for (let i = 0; i < 6; i++) {
+      const y = i * 45;
+      ctx.fillStyle = `rgba(100, 200, 220, ${0.1 + Math.random() * 0.2})`;
+      ctx.fillRect(0, y, 512, 20 + Math.random() * 20);
+    }
+  }
+
+  private drawNeptuneTexture(ctx: CanvasRenderingContext2D): void {
+    // Deep blue gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, '#4a6eff');
+    gradient.addColorStop(0.5, '#3858d0');
+    gradient.addColorStop(1, '#2848b0');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 256);
+    
+    // Cloud bands
+    for (let i = 0; i < 5; i++) {
+      const y = 30 + i * 50;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x < 512; x += 10) {
+        ctx.lineTo(x, y + Math.sin(x * 0.03 + i) * 8);
+      }
+      ctx.strokeStyle = `rgba(100, 140, 255, ${0.3 + Math.random() * 0.3})`;
+      ctx.lineWidth = 10 + Math.random() * 15;
+      ctx.stroke();
+    }
+    
+    // Great Dark Spot
+    ctx.fillStyle = 'rgba(30, 50, 120, 0.6)';
+    ctx.beginPath();
+    ctx.ellipse(200, 130, 35, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  private createAtmosphereGlow(radius: number, color: string): THREE.Mesh {
+    const geometry = new THREE.SphereGeometry(radius * 1.05, 32, 32);
+    const material = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(color),
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.BackSide,
+    });
+    return new THREE.Mesh(geometry, material);
+  }
+
+  private addSaturnRings(mesh: THREE.Mesh, radius: number): void {
+    // Multiple ring layers for detail
+    const ringData = [
+      { inner: 1.2, outer: 1.5, color: '#a08060', opacity: 0.7 },
+      { inner: 1.5, outer: 1.8, color: '#c0a080', opacity: 0.5 },
+      { inner: 1.85, outer: 2.2, color: '#d0b090', opacity: 0.6 },
+    ];
+
+    for (const ring of ringData) {
+      const geometry = new THREE.RingGeometry(radius * ring.inner, radius * ring.outer, 64);
+      const material = new THREE.MeshBasicMaterial({
+        color: ring.color,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: ring.opacity,
+      });
+      const ringMesh = new THREE.Mesh(geometry, material);
+      ringMesh.rotation.x = Math.PI / 2;
+      mesh.add(ringMesh);
+    }
+  }
+
+  private addUranusRings(mesh: THREE.Mesh, radius: number): void {
+    // Uranus has thin, dark rings
+    const geometry = new THREE.RingGeometry(radius * 1.5, radius * 1.7, 64);
+    const material = new THREE.MeshBasicMaterial({
+      color: '#404050',
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.3,
+    });
+    const ring = new THREE.Mesh(geometry, material);
+    // Uranus is tilted ~98 degrees
+    ring.rotation.x = Math.PI / 2;
+    ring.rotation.z = Math.PI * 0.1;
+    mesh.add(ring);
   }
 
   private createPlanetGlowTexture(colorHex: string): THREE.Texture {
@@ -277,7 +597,6 @@ export class GameScene {
     canvas.height = 128;
     const ctx = canvas.getContext('2d')!;
 
-    // Convert hex color to RGB
     const color = new THREE.Color(colorHex);
     const r = Math.floor(color.r * 255);
     const g = Math.floor(color.g * 255);
@@ -323,56 +642,126 @@ export class GameScene {
   }
 
   private createBall(): THREE.Object3D {
-    // Create alien UFO spaceship - MASSIVELY scaled for visibility at interplanetary distances!
-    const shipGroup = new THREE.Group(); // Must be Group, not Mesh!
-    const scale = 100; // HUGE scale factor - 100x bigger than before
+    // Create sleek alien invasion craft
+    const shipGroup = new THREE.Group();
+    const scale = 120;
 
-    // Main saucer body (flattened sphere)
-    const saucerGeometry = new THREE.SphereGeometry(4 * scale, 32, 16);
-    saucerGeometry.scale(1, 0.3, 1);
-    const saucerMaterial = new THREE.MeshBasicMaterial({
-      color: 0x44ff88,
+    // Main hull - sleek metallic body
+    const hullGeometry = new THREE.SphereGeometry(4 * scale, 48, 32);
+    hullGeometry.scale(1, 0.25, 1);
+    const hullMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2a3a4a,
+      metalness: 0.9,
+      roughness: 0.2,
+      emissive: 0x1a2a3a,
+      emissiveIntensity: 0.3,
     });
-    const saucer = new THREE.Mesh(saucerGeometry, saucerMaterial);
-    shipGroup.add(saucer);
+    const hull = new THREE.Mesh(hullGeometry, hullMaterial);
+    shipGroup.add(hull);
 
-    // Cockpit dome on top
-    const domeGeometry = new THREE.SphereGeometry(2 * scale, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    // Central command dome - glowing cyan
+    const domeGeometry = new THREE.SphereGeometry(2 * scale, 32, 24, 0, Math.PI * 2, 0, Math.PI / 2);
     const domeMaterial = new THREE.MeshBasicMaterial({
-      color: 0x88ffff,
+      color: 0x00ffff,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.85,
     });
     const dome = new THREE.Mesh(domeGeometry, domeMaterial);
-    dome.position.y = 0.8 * scale;
+    dome.position.y = 0.7 * scale;
     shipGroup.add(dome);
 
-    // Glowing ring around the saucer
-    const ringGeometry = new THREE.TorusGeometry(4.5 * scale, 0.8 * scale, 8, 32);
+    // Inner dome light
+    const innerDomeGeometry = new THREE.SphereGeometry(1.2 * scale, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    const innerDomeMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const innerDome = new THREE.Mesh(innerDomeGeometry, innerDomeMaterial);
+    innerDome.position.y = 0.9 * scale;
+    shipGroup.add(innerDome);
+
+    // Bottom hull piece
+    const bottomGeometry = new THREE.ConeGeometry(2 * scale, 1.5 * scale, 32);
+    const bottomMaterial = new THREE.MeshStandardMaterial({
+      color: 0x1a2a3a,
+      metalness: 0.9,
+      roughness: 0.3,
+    });
+    const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
+    bottom.rotation.x = Math.PI;
+    bottom.position.y = -0.8 * scale;
+    shipGroup.add(bottom);
+
+    // Glowing propulsion ring
+    const ringGeometry = new THREE.TorusGeometry(4.2 * scale, 0.4 * scale, 16, 48);
     const ringMaterial = new THREE.MeshBasicMaterial({
-      color: 0xff4444,
+      color: 0x00ff88,
     });
     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
     ring.rotation.x = Math.PI / 2;
     shipGroup.add(ring);
 
-    // Pulsing lights around the edge
-    for (let i = 0; i < 8; i++) {
-      const lightGeometry = new THREE.SphereGeometry(1 * scale, 8, 8);
+    // Outer accent ring
+    const outerRingGeometry = new THREE.TorusGeometry(4.8 * scale, 0.15 * scale, 8, 48);
+    const outerRingMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff4466,
+    });
+    const outerRing = new THREE.Mesh(outerRingGeometry, outerRingMaterial);
+    outerRing.rotation.x = Math.PI / 2;
+    shipGroup.add(outerRing);
+
+    // Engine lights around the edge
+    for (let i = 0; i < 12; i++) {
+      const lightGeometry = new THREE.SphereGeometry(0.6 * scale, 12, 12);
+      const isMainEngine = i % 3 === 0;
       const lightMaterial = new THREE.MeshBasicMaterial({
-        color: i % 2 === 0 ? 0xff0000 : 0x00ff00,
+        color: isMainEngine ? 0x00ffff : 0xff6644,
       });
       const light = new THREE.Mesh(lightGeometry, lightMaterial);
-      const angle = (i / 8) * Math.PI * 2;
+      const angle = (i / 12) * Math.PI * 2;
       light.position.x = Math.cos(angle) * 4.5 * scale;
       light.position.z = Math.sin(angle) * 4.5 * scale;
-      light.position.y = 0;
+      light.position.y = -0.3 * scale;
       shipGroup.add(light);
+    }
+
+    // Weapon arrays (front-facing)
+    for (let i = -1; i <= 1; i += 2) {
+      const weaponGeometry = new THREE.CylinderGeometry(0.3 * scale, 0.5 * scale, 2 * scale, 8);
+      const weaponMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3a4a5a,
+        metalness: 0.95,
+        roughness: 0.1,
+      });
+      const weapon = new THREE.Mesh(weaponGeometry, weaponMaterial);
+      weapon.rotation.x = Math.PI / 2;
+      weapon.position.set(i * 2.5 * scale, 0, 3 * scale);
+      shipGroup.add(weapon);
+
+      // Weapon tip glow
+      const tipGeometry = new THREE.SphereGeometry(0.4 * scale, 8, 8);
+      const tipMaterial = new THREE.MeshBasicMaterial({ color: 0xff0044 });
+      const tip = new THREE.Mesh(tipGeometry, tipMaterial);
+      tip.position.set(i * 2.5 * scale, 0, 4 * scale);
+      shipGroup.add(tip);
     }
 
     this.scene.add(shipGroup);
 
-    // Add HUGE glow sprite for visibility at interplanetary scale
+    // Engine glow effect below ship
+    const engineGlowMaterial = new THREE.SpriteMaterial({
+      map: this.createEngineGlowTexture(),
+      color: 0x00ff88,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+    });
+    const engineGlow = new THREE.Sprite(engineGlowMaterial);
+    engineGlow.scale.set(600, 600, 1);
+    engineGlow.position.y = -50;
+    shipGroup.add(engineGlow);
+
+    // Main visibility glow
     const glowMaterial = new THREE.SpriteMaterial({
       map: this.createBallGlowTexture(),
       color: 0x44ff88,
@@ -380,10 +769,28 @@ export class GameScene {
       blending: THREE.AdditiveBlending,
     });
     const glow = new THREE.Sprite(glowMaterial);
-    glow.scale.set(800, 800, 1); // 10x bigger glow
+    glow.scale.set(1000, 1000, 1);
     shipGroup.add(glow);
 
     return shipGroup;
+  }
+
+  private createEngineGlowTexture(): THREE.Texture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+
+    const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradient.addColorStop(0, 'rgba(0, 255, 136, 1)');
+    gradient.addColorStop(0.3, 'rgba(0, 255, 136, 0.5)');
+    gradient.addColorStop(0.6, 'rgba(0, 200, 100, 0.2)');
+    gradient.addColorStop(1, 'rgba(0, 150, 80, 0)');
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 128, 128);
+
+    return new THREE.CanvasTexture(canvas);
   }
 
   private createBallGlowTexture(): THREE.Texture {
