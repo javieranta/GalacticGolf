@@ -95,6 +95,10 @@ export class AimController {
     this.targetPosition = copy(targetPos);
   }
 
+  public updateTargetPosition(targetPos: Vec3): void {
+    this.targetPosition = copy(targetPos);
+  }
+
   public setAimAssistEnabled(enabled: boolean): void {
     this.aimAssistEnabled = enabled;
   }

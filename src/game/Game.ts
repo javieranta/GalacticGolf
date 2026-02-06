@@ -239,6 +239,9 @@ export class Game {
       this.updateSimulation(realDt);
     } else if (this.state.phase === 'aiming') {
       this.updateAiming();
+      // Advance simTime during aiming too so planets orbit continuously
+      // Use the current time scale for consistent motion before/after launch
+      this.simTime += realDt * this.state.timeScale;
     }
 
     // Always update planet positions for display
@@ -398,6 +401,10 @@ export class Game {
 
   private updateAiming(): void {
     const aimState = this.aimController.state;
+
+    // Update target position as planets move (for aim assist)
+    const targetPos = getBodyPosition(PLANETS[this.currentHoleDef.target], this.simTime);
+    this.aimController.updateTargetPosition(targetPos);
 
     // Update aim line with power-based coloring
     const aimEndpoints = this.aimController.getAimLineEndpoints();
