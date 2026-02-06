@@ -219,9 +219,9 @@ export class GameScene {
     // Use the visual radius multipliers for arcade-style massive planets
     const multiplier = body.name === 'Sun' ? SUN_VISUAL_RADIUS_MULTIPLIER : VISUAL_RADIUS_MULTIPLIER;
     const baseRadius = unitToRender(body.radius * multiplier);
-    // MINIMUM 15 render units - every planet must be clearly visible!
-    // This ensures even Mercury is a decent size on screen
-    return Math.max(15.0, baseRadius);
+    // MINIMUM 80 render units - every planet must be CLEARLY visible!
+    // With camera at ~10000 units, 80 units is still small but visible
+    return Math.max(80.0, baseRadius);
   }
 
   private createPlanets(): void {
@@ -239,6 +239,17 @@ export class GameScene {
       const mesh = new THREE.Mesh(geometry, material);
       this.scene.add(mesh);
       this.planetMeshes.set(name, mesh);
+
+      // Add GLOW SPRITE to every planet for visibility at any distance
+      const glowMaterial = new THREE.SpriteMaterial({
+        map: this.createPlanetGlowTexture(planet.color),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+      });
+      const glow = new THREE.Sprite(glowMaterial);
+      // Glow is 4x the planet size for visibility
+      glow.scale.set(renderRadius * 4, renderRadius * 4, 1);
+      mesh.add(glow);
 
       // Add rings for Saturn
       if (name === 'Saturn') {
@@ -258,6 +269,30 @@ export class GameScene {
         mesh.add(ring);
       }
     }
+  }
+
+  private createPlanetGlowTexture(colorHex: string): THREE.Texture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+
+    // Convert hex color to RGB
+    const color = new THREE.Color(colorHex);
+    const r = Math.floor(color.r * 255);
+    const g = Math.floor(color.g * 255);
+    const b = Math.floor(color.b * 255);
+
+    const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 1)`);
+    gradient.addColorStop(0.2, `rgba(${r}, ${g}, ${b}, 0.6)`);
+    gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.2)`);
+    gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 128, 128);
+
+    return new THREE.CanvasTexture(canvas);
   }
 
   private createOrbitLines(): void {

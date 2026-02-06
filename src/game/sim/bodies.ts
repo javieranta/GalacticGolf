@@ -55,18 +55,21 @@ export const CAPTURE_RADIUS_MULTIPLIER = 1200;
 export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
 
 // Base orbit speed multiplier
-export const ORBIT_SPEED_MULTIPLIER = 50;
+export const ORBIT_SPEED_MULTIPLIER = 10;
 
-// Outer planets get faster orbit multipliers (otherwise they barely move)
-// This function returns extra multiplier based on semi-major axis
+// Orbit speed varies by distance - SLOW inner planets, FASTER outer planets
+// This creates more uniform visual motion across the solar system
 export function getOrbitSpeedMultiplier(semiMajorAxisAU: number): number {
-  // Inner planets (< 2 AU): base speed (1x extra)
-  // Outer planets: progressively faster, up to 20x extra for Neptune
-  if (semiMajorAxisAU < 2) return 1;
-  if (semiMajorAxisAU < 6) return 3;   // Jupiter zone
-  if (semiMajorAxisAU < 12) return 6;  // Saturn zone
-  if (semiMajorAxisAU < 22) return 12; // Uranus zone
-  return 20; // Neptune and beyond
+  // Inner planets (< 2 AU): SLOW them down (they naturally orbit fast)
+  if (semiMajorAxisAU < 0.5) return 0.3;  // Mercury - very slow
+  if (semiMajorAxisAU < 1) return 0.5;    // Venus
+  if (semiMajorAxisAU < 1.5) return 0.7;  // Earth
+  if (semiMajorAxisAU < 2) return 1;      // Mars
+  // Outer planets: speed them up progressively
+  if (semiMajorAxisAU < 6) return 8;      // Jupiter zone
+  if (semiMajorAxisAU < 12) return 20;    // Saturn zone
+  if (semiMajorAxisAU < 22) return 50;    // Uranus zone
+  return 100; // Neptune and beyond
 }
 
 // Sun data
