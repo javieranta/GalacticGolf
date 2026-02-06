@@ -152,7 +152,7 @@ export class Game {
 
     // Update scene
     const planetPositions = updatePlanetPositions(this.simTime);
-    this.scene.updatePlanetPositions(planetPositions);
+    this.scene.updatePlanetPositions(planetPositions, this.simTime);
     this.scene.updateBallPosition(this.ball.position);
     this.scene.updateStartMarker(this.ball.position);
     this.scene.startMarker.visible = true; // Show start marker during aiming
@@ -239,11 +239,14 @@ export class Game {
       this.updateSimulation(realDt);
     } else if (this.state.phase === 'aiming') {
       this.updateAiming();
+      // Advance simTime during aiming at the SAME time scale as simulation
+      // User can adjust via the Time Scale slider in the top right
+      this.simTime += realDt * this.state.timeScale;
     }
 
     // Always update planet positions for display
     const planetPositions = updatePlanetPositions(this.simTime);
-    this.scene.updatePlanetPositions(planetPositions);
+    this.scene.updatePlanetPositions(planetPositions, this.simTime);
 
     // Render
     this.scene.render();
@@ -398,6 +401,10 @@ export class Game {
 
   private updateAiming(): void {
     const aimState = this.aimController.state;
+
+    // Update target position as planets move (for aim assist)
+    const targetPos = getBodyPosition(PLANETS[this.currentHoleDef.target], this.simTime);
+    this.aimController.updateTargetPosition(targetPos);
 
     // Update aim line with power-based coloring
     const aimEndpoints = this.aimController.getAimLineEndpoints();

@@ -2,7 +2,7 @@
  * Collision detection and arcade assist rules for Galactic Golf
  */
 
-import { SUN, PLANETS, PlanetName, CelestialBody } from './bodies';
+import { SUN, PLANETS, PlanetName, CelestialBody, VISUAL_RADIUS_MULTIPLIER, CAPTURE_RADIUS_MULTIPLIER, SUN_VISUAL_RADIUS_MULTIPLIER } from './bodies';
 import {
   Vec3,
   distance,
@@ -33,10 +33,11 @@ export type CollisionResult =
 
 /**
  * Compute generous capture radius for target planet
- * targetCaptureRadiusMeters = max(1.6 * targetRadius, targetRadius + 15_000_000)
+ * Uses capture radius multiplier - LARGER than visual for forgiving gameplay
  */
 export function getTargetCaptureRadius(targetPlanet: CelestialBody): number {
-  return Math.max(1.6 * targetPlanet.radius, targetPlanet.radius + 15_000_000);
+  // Capture zone is larger than visual size - ships should get captured!
+  return targetPlanet.radius * CAPTURE_RADIUS_MULTIPLIER;
 }
 
 /**
@@ -85,7 +86,8 @@ export function checkTargetCapture(
  */
 export function checkSunCollision(ballPos: Vec3): boolean {
   const distToSun = magnitude(ballPos);
-  return distToSun < SUN.radius * SUN_FAIL_RADIUS_MULTIPLIER;
+  // Use smaller visual multiplier for Sun (otherwise it swallows inner planets)
+  return distToSun < SUN.radius * SUN_VISUAL_RADIUS_MULTIPLIER * SUN_FAIL_RADIUS_MULTIPLIER;
 }
 
 /**
@@ -102,7 +104,8 @@ export function checkPlanetBounce(
 
     const planet = PLANETS[name];
     const dist = distance(ball.position, planetPos);
-    const collisionRadius = planet.radius + BALL_RADIUS_METERS;
+    // Use visual radius for collision (arcade gameplay)
+    const collisionRadius = planet.radius * VISUAL_RADIUS_MULTIPLIER + BALL_RADIUS_METERS;
 
     if (dist < collisionRadius) {
       // Apply inelastic reflection
@@ -225,7 +228,7 @@ export function getLandingPosition(
   planetRadius: number,
   approachDir: Vec3
 ): Vec3 {
-  // Place ball on surface in direction of approach
+  // Place ball on visual surface in direction of approach
   const surfaceDir = normalize(approachDir);
-  return add(planetPos, scale(surfaceDir, planetRadius * 1.1));
+  return add(planetPos, scale(surfaceDir, planetRadius * VISUAL_RADIUS_MULTIPLIER * 1.1));
 }

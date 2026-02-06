@@ -60,9 +60,10 @@ export const ATTEMPT_TIMEOUT_REAL_SECONDS = 90;
 
 // Time scale bounds (sim seconds per real second)
 // At 1M scale, 1 real second = ~11.5 days of sim time
-export const MIN_TIME_SCALE = 500_000;
-export const MAX_TIME_SCALE = 5_000_000;
-export const DEFAULT_TIME_SCALE = 1_500_000; // Reasonable - visible movement
+// Time scale range - user can adjust via slider
+export const MIN_TIME_SCALE = 200_000;
+export const MAX_TIME_SCALE = 10_000_000;
+export const DEFAULT_TIME_SCALE = 1_000_000; // Fast ship movement
 
 // Simulation timestep bounds (in sim seconds per frame)
 // Higher values = faster simulation but less accurate

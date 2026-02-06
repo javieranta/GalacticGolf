@@ -40,25 +40,69 @@ export interface CelestialBody {
 // Degrees to radians
 const deg = (d: number) => (d * Math.PI) / 180;
 
+// Gameplay gravity multiplier - makes planets "pull" HARD for dramatic effect
+// 1500x gives dramatic trajectory bending even at high speeds
+const GRAVITY_BOOST = 1500;
+
+// Visual radius multiplier - planets appear MASSIVE for arcade gameplay
+export const VISUAL_RADIUS_MULTIPLIER = 800;
+
+// Capture radius multiplier - even larger than visual for forgiving gameplay
+// Ships need to get captured, not just deflected!
+export const CAPTURE_RADIUS_MULTIPLIER = 1200;
+
+// Sun uses a smaller visual multiplier (otherwise it swallows inner planets)
+export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
+
+// Base orbit speed multiplier
+export const ORBIT_SPEED_MULTIPLIER = 10;
+
+// Orbit speed varies by distance - ALL planets orbit slowly for smooth visuals
+export function getOrbitSpeedMultiplier(semiMajorAxisAU: number): number {
+  // Inner planets: very slow
+  if (semiMajorAxisAU < 0.5) return 0.02;  // Mercury
+  if (semiMajorAxisAU < 1) return 0.03;    // Venus
+  if (semiMajorAxisAU < 1.5) return 0.04;  // Earth
+  if (semiMajorAxisAU < 2) return 0.05;    // Mars
+  // Outer planets: also slow (reduced significantly)
+  if (semiMajorAxisAU < 6) return 0.5;     // Jupiter zone
+  if (semiMajorAxisAU < 12) return 1.5;    // Saturn zone
+  if (semiMajorAxisAU < 22) return 4;      // Uranus zone
+  return 8; // Neptune and beyond
+}
+
+// Visual orbit expansion - spread out inner planets for better visuals
+// Returns multiplier for semi-major axis in RENDERING only (not physics)
+export function getVisualOrbitMultiplier(semiMajorAxisAU: number): number {
+  // Inner planets get expanded orbits for visibility
+  if (semiMajorAxisAU < 0.5) return 4;   // Mercury: 0.39 AU → ~1.6 AU visually
+  if (semiMajorAxisAU < 1) return 2.5;   // Venus: 0.72 AU → ~1.8 AU visually
+  if (semiMajorAxisAU < 1.5) return 2;   // Earth: 1 AU → 2 AU visually
+  if (semiMajorAxisAU < 2) return 1.5;   // Mars: 1.5 AU → 2.25 AU visually
+  return 1; // Outer planets: no expansion needed
+}
+
 // Sun data
 export const SUN: CelestialBody = {
   name: 'Sun',
   mass: 1.989e30,
   radius: 6.9634e8,
-  mu: G * 1.989e30,
+  mu: G * 1.989e30 * GRAVITY_BOOST,
   color: '#ffdd44',
-  renderScaleFactor: 400, // Very large for visibility
+  renderScaleFactor: 1500, // HUGE for visibility
 };
 
 // Planet data with J2000 orbital elements
+// Visual sizes (renderScaleFactor) boosted 10x for MASSIVE visibility
+// Gravity (mu) boosted 150x for intense gravitational gameplay
 export const PLANETS: Record<PlanetName, CelestialBody> = {
   Mercury: {
     name: 'Mercury',
     mass: 3.3011e23,
     radius: 2.4397e6,
-    mu: G * 3.3011e23,
+    mu: G * 3.3011e23 * GRAVITY_BOOST,
     color: '#b5b5b5',
-    renderScaleFactor: 8000,
+    renderScaleFactor: 80000, // 10x original
     orbitalElements: {
       a: 0.387098 * AU,
       e: 0.205630,
@@ -72,9 +116,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Venus',
     mass: 4.8675e24,
     radius: 6.0518e6,
-    mu: G * 4.8675e24,
+    mu: G * 4.8675e24 * GRAVITY_BOOST,
     color: '#e6c87a',
-    renderScaleFactor: 5000,
+    renderScaleFactor: 50000, // 10x original
     orbitalElements: {
       a: 0.723332 * AU,
       e: 0.006772,
@@ -88,9 +132,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Earth',
     mass: 5.97237e24,
     radius: 6.371e6,
-    mu: G * 5.97237e24,
+    mu: G * 5.97237e24 * GRAVITY_BOOST,
     color: '#4a9eff',
-    renderScaleFactor: 5000,
+    renderScaleFactor: 50000, // 10x original
     orbitalElements: {
       a: 1.000001018 * AU,
       e: 0.0167086,
@@ -104,9 +148,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Mars',
     mass: 6.4171e23,
     radius: 3.3895e6,
-    mu: G * 6.4171e23,
+    mu: G * 6.4171e23 * GRAVITY_BOOST,
     color: '#ff6644',
-    renderScaleFactor: 6000,
+    renderScaleFactor: 60000, // 10x original
     orbitalElements: {
       a: 1.52368055 * AU,
       e: 0.0934,
@@ -120,9 +164,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Jupiter',
     mass: 1.8982e27,
     radius: 6.9911e7,
-    mu: G * 1.8982e27,
+    mu: G * 1.8982e27 * GRAVITY_BOOST,
     color: '#d4a574',
-    renderScaleFactor: 1500,
+    renderScaleFactor: 15000, // 10x original
     orbitalElements: {
       a: 5.2038 * AU,
       e: 0.0489,
@@ -136,9 +180,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Saturn',
     mass: 5.6834e26,
     radius: 5.8232e7,
-    mu: G * 5.6834e26,
+    mu: G * 5.6834e26 * GRAVITY_BOOST,
     color: '#f4d59e',
-    renderScaleFactor: 1800,
+    renderScaleFactor: 18000, // 10x original
     orbitalElements: {
       a: 9.5826 * AU,
       e: 0.0565,
@@ -152,9 +196,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Uranus',
     mass: 8.6810e25,
     radius: 2.5362e7,
-    mu: G * 8.6810e25,
+    mu: G * 8.6810e25 * GRAVITY_BOOST,
     color: '#7de3f4',
-    renderScaleFactor: 3000,
+    renderScaleFactor: 30000, // 10x original
     orbitalElements: {
       a: 19.19126 * AU,
       e: 0.04717,
@@ -168,9 +212,9 @@ export const PLANETS: Record<PlanetName, CelestialBody> = {
     name: 'Neptune',
     mass: 1.02413e26,
     radius: 2.4622e7,
-    mu: G * 1.02413e26,
+    mu: G * 1.02413e26 * GRAVITY_BOOST,
     color: '#4a6eff',
-    renderScaleFactor: 3000,
+    renderScaleFactor: 30000, // 10x original
     orbitalElements: {
       a: 30.07 * AU,
       e: 0.008678,

@@ -21,7 +21,8 @@ export interface HoleDef {
 }
 
 // Speed hints in m/s (divide by 1000 to get km/s)
-// 100,000 m/s = 100 km/s, 500,000 m/s = 500 km/s
+// Boosted 5x for faster, more exciting gameplay
+// Starting positions just outside the outermost orbit (~32-35 AU, Neptune is at 30 AU)
 export const HOLES: HoleDef[] = [
   {
     id: 1,
@@ -29,13 +30,12 @@ export const HOLES: HoleDef[] = [
     target: 'Jupiter',
     par: 2,
     timeOffsetSeconds: 0,
-    // Start from outside solar system (Neptune is at 30 AU)
     startPositionMeters: {
-      x: 60 * AU,
-      y: 20 * AU,
+      x: 32 * AU,
+      y: 5 * AU,
       z: 0,
     },
-    speedHint: { min: 100_000, max: 400_000, recommended: 200_000 }, // 100-400 km/s
+    speedHint: { min: 200_000, max: 800_000, recommended: 400_000 },
     cameraHint: 'BALL',
   },
   {
@@ -45,11 +45,11 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 1_200_000,
     startPositionMeters: {
-      x: 70 * AU,
-      y: -25 * AU,
+      x: 33 * AU,
+      y: -8 * AU,
       z: 0,
     },
-    speedHint: { min: 120_000, max: 450_000, recommended: 250_000 },
+    speedHint: { min: 250_000, max: 900_000, recommended: 500_000 },
     cameraHint: 'BALL',
   },
   {
@@ -59,11 +59,11 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 2_600_000,
     startPositionMeters: {
-      x: 50 * AU,
-      y: 30 * AU,
+      x: 32 * AU,
+      y: 10 * AU,
       z: 0,
     },
-    speedHint: { min: 80_000, max: 350_000, recommended: 180_000 },
+    speedHint: { min: 150_000, max: 600_000, recommended: 300_000 },
     cameraHint: 'BALL',
   },
   {
@@ -73,11 +73,11 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 3_200_000,
     startPositionMeters: {
-      x: -55 * AU,
-      y: 35 * AU,
+      x: -32 * AU,
+      y: 8 * AU,
       z: 0,
     },
-    speedHint: { min: 100_000, max: 400_000, recommended: 220_000 },
+    speedHint: { min: 180_000, max: 700_000, recommended: 350_000 },
     cameraHint: 'BALL',
   },
   {
@@ -87,11 +87,11 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 4_400_000,
     startPositionMeters: {
-      x: -45 * AU,
-      y: -50 * AU,
+      x: -30 * AU,
+      y: -12 * AU,
       z: 0,
     },
-    speedHint: { min: 120_000, max: 500_000, recommended: 280_000 },
+    speedHint: { min: 200_000, max: 800_000, recommended: 450_000 },
     cameraHint: 'BALL',
   },
   {
@@ -101,11 +101,11 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 5_600_000,
     startPositionMeters: {
-      x: 55 * AU,
-      y: -20 * AU,
+      x: 33 * AU,
+      y: -6 * AU,
       z: 0,
     },
-    speedHint: { min: 90_000, max: 380_000, recommended: 200_000 },
+    speedHint: { min: 150_000, max: 600_000, recommended: 320_000 },
     cameraHint: 'BALL',
   },
   {
@@ -115,11 +115,11 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 6_900_000,
     startPositionMeters: {
-      x: 80 * AU,
-      y: 40 * AU,
+      x: 34 * AU,
+      y: 10 * AU,
       z: 0,
     },
-    speedHint: { min: 140_000, max: 550_000, recommended: 320_000 },
+    speedHint: { min: 300_000, max: 1_100_000, recommended: 600_000 },
     cameraHint: 'BALL',
   },
   {
@@ -129,11 +129,11 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 7_800_000,
     startPositionMeters: {
-      x: 100 * AU,
-      y: -35 * AU,
+      x: 35 * AU,
+      y: -5 * AU,
       z: 0,
     },
-    speedHint: { min: 160_000, max: 600_000, recommended: 360_000 },
+    speedHint: { min: 350_000, max: 1_200_000, recommended: 700_000 },
     cameraHint: 'BALL',
   },
   {
@@ -143,11 +143,11 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 9_000_000,
     startPositionMeters: {
-      x: -80 * AU,
-      y: 90 * AU,
-      z: 5 * AU,
+      x: -34 * AU,
+      y: 8 * AU,
+      z: 1 * AU,
     },
-    speedHint: { min: 200_000, max: 800_000, recommended: 500_000 },
+    speedHint: { min: 400_000, max: 1_500_000, recommended: 800_000 },
     cameraHint: 'BALL',
   },
 ];
