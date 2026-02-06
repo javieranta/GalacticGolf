@@ -4,7 +4,7 @@
  * Computes planet positions from orbital elements using Kepler's equation
  */
 
-import { CelestialBody, SUN, PLANETS, PlanetName } from './bodies';
+import { CelestialBody, SUN, PLANETS, PlanetName, ORBIT_SPEED_MULTIPLIER } from './bodies';
 
 export interface Vec3 {
   x: number;
@@ -131,8 +131,8 @@ export function getBodyPosition(body: CelestialBody, t: number): Vec3 {
   const { a, e, i, omega, w, M0 } = body.orbitalElements;
   const n = body.meanMotion;
 
-  // Mean anomaly at time t
-  const M = M0 + n * t;
+  // Mean anomaly at time t (with orbit speed multiplier for visual excitement)
+  const M = M0 + n * t * ORBIT_SPEED_MULTIPLIER;
 
   // Solve Kepler's equation for eccentric anomaly
   const E = solveKepler(M, e);

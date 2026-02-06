@@ -4,7 +4,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { SUN, PLANETS, PlanetName, PLANET_NAMES, CelestialBody } from './sim/bodies';
+import { SUN, PLANETS, PlanetName, PLANET_NAMES, CelestialBody, VISUAL_RADIUS_MULTIPLIER, SUN_VISUAL_RADIUS_MULTIPLIER } from './sim/bodies';
 import { Vec3, generateOrbitPath } from './sim/orbits';
 import { toRender as unitToRender } from './sim/units';
 
@@ -216,9 +216,12 @@ export class GameScene {
   }
 
   private getBodyRenderRadius(body: CelestialBody): number {
-    const baseRadius = unitToRender(body.radius) * body.renderScaleFactor;
-    // Clamp for visibility - allow larger sizes
-    return Math.max(1.5, Math.min(12.0, baseRadius));
+    // Use the visual radius multipliers for arcade-style massive planets
+    // This must match the collision detection radii!
+    const multiplier = body.name === 'Sun' ? SUN_VISUAL_RADIUS_MULTIPLIER : VISUAL_RADIUS_MULTIPLIER;
+    const baseRadius = unitToRender(body.radius * multiplier);
+    // Minimum size for visibility, no maximum (planets are meant to be HUGE)
+    return Math.max(3.0, baseRadius);
   }
 
   private createPlanets(): void {

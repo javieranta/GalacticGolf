@@ -243,7 +243,7 @@ export const HUD: React.FC = () => {
 
       {/* Version number */}
       <div className="absolute bottom-4 right-4 pointer-events-none">
-        <div className="text-white/30 text-xs font-mono">v1.1.0</div>
+        <div className="text-white/30 text-xs font-mono">v1.2.0</div>
       </div>
     </div>
   );

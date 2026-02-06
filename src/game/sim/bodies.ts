@@ -41,7 +41,18 @@ export interface CelestialBody {
 const deg = (d: number) => (d * Math.PI) / 180;
 
 // Gameplay gravity multiplier - makes planets "pull" HARD for dramatic effect
-const GRAVITY_BOOST = 150;
+// 1500x gives dramatic trajectory bending even at high speeds
+const GRAVITY_BOOST = 1500;
+
+// Visual/collision radius multiplier - planets appear MASSIVE for arcade gameplay
+// This affects both rendering AND collision/capture detection
+export const VISUAL_RADIUS_MULTIPLIER = 500;
+
+// Sun uses a smaller visual multiplier (otherwise it swallows inner planets)
+export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
+
+// Orbit speed multiplier - makes planets visibly move during gameplay
+export const ORBIT_SPEED_MULTIPLIER = 50;
 
 // Sun data
 export const SUN: CelestialBody = {
