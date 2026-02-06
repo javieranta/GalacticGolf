@@ -2,7 +2,7 @@
  * Collision detection and arcade assist rules for Galactic Golf
  */
 
-import { SUN, PLANETS, PlanetName, CelestialBody, VISUAL_RADIUS_MULTIPLIER, SUN_VISUAL_RADIUS_MULTIPLIER } from './bodies';
+import { SUN, PLANETS, PlanetName, CelestialBody, VISUAL_RADIUS_MULTIPLIER, CAPTURE_RADIUS_MULTIPLIER, SUN_VISUAL_RADIUS_MULTIPLIER } from './bodies';
 import {
   Vec3,
   distance,
@@ -33,11 +33,11 @@ export type CollisionResult =
 
 /**
  * Compute generous capture radius for target planet
- * Uses visual radius multiplier for arcade-style massive capture zones
+ * Uses capture radius multiplier - LARGER than visual for forgiving gameplay
  */
 export function getTargetCaptureRadius(targetPlanet: CelestialBody): number {
-  // Capture zone matches the visual size of the planet
-  return targetPlanet.radius * VISUAL_RADIUS_MULTIPLIER;
+  // Capture zone is larger than visual size - ships should get captured!
+  return targetPlanet.radius * CAPTURE_RADIUS_MULTIPLIER;
 }
 
 /**

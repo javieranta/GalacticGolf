@@ -44,15 +44,30 @@ const deg = (d: number) => (d * Math.PI) / 180;
 // 1500x gives dramatic trajectory bending even at high speeds
 const GRAVITY_BOOST = 1500;
 
-// Visual/collision radius multiplier - planets appear MASSIVE for arcade gameplay
-// This affects both rendering AND collision/capture detection
-export const VISUAL_RADIUS_MULTIPLIER = 500;
+// Visual radius multiplier - planets appear MASSIVE for arcade gameplay
+export const VISUAL_RADIUS_MULTIPLIER = 800;
+
+// Capture radius multiplier - even larger than visual for forgiving gameplay
+// Ships need to get captured, not just deflected!
+export const CAPTURE_RADIUS_MULTIPLIER = 1200;
 
 // Sun uses a smaller visual multiplier (otherwise it swallows inner planets)
 export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
 
-// Orbit speed multiplier - makes planets visibly move during gameplay
+// Base orbit speed multiplier
 export const ORBIT_SPEED_MULTIPLIER = 50;
+
+// Outer planets get faster orbit multipliers (otherwise they barely move)
+// This function returns extra multiplier based on semi-major axis
+export function getOrbitSpeedMultiplier(semiMajorAxisAU: number): number {
+  // Inner planets (< 2 AU): base speed (1x extra)
+  // Outer planets: progressively faster, up to 20x extra for Neptune
+  if (semiMajorAxisAU < 2) return 1;
+  if (semiMajorAxisAU < 6) return 3;   // Jupiter zone
+  if (semiMajorAxisAU < 12) return 6;  // Saturn zone
+  if (semiMajorAxisAU < 22) return 12; // Uranus zone
+  return 20; // Neptune and beyond
+}
 
 // Sun data
 export const SUN: CelestialBody = {

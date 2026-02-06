@@ -217,11 +217,11 @@ export class GameScene {
 
   private getBodyRenderRadius(body: CelestialBody): number {
     // Use the visual radius multipliers for arcade-style massive planets
-    // This must match the collision detection radii!
     const multiplier = body.name === 'Sun' ? SUN_VISUAL_RADIUS_MULTIPLIER : VISUAL_RADIUS_MULTIPLIER;
     const baseRadius = unitToRender(body.radius * multiplier);
-    // Minimum size for visibility, no maximum (planets are meant to be HUGE)
-    return Math.max(3.0, baseRadius);
+    // MINIMUM 15 render units - every planet must be clearly visible!
+    // This ensures even Mercury is a decent size on screen
+    return Math.max(15.0, baseRadius);
   }
 
   private createPlanets(): void {
