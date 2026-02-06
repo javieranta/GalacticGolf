@@ -22,7 +22,7 @@ export interface HoleDef {
 
 // Speed hints in m/s (divide by 1000 to get km/s)
 // Boosted 5x for faster, more exciting gameplay
-// Starting positions MUCH closer for better visuals and less empty space
+// Starting positions just outside the outermost orbit (~32-35 AU, Neptune is at 30 AU)
 export const HOLES: HoleDef[] = [
   {
     id: 1,
@@ -30,13 +30,12 @@ export const HOLES: HoleDef[] = [
     target: 'Jupiter',
     par: 2,
     timeOffsetSeconds: 0,
-    // Closer start - just outside Jupiter's orbit
     startPositionMeters: {
-      x: 20 * AU,
-      y: 8 * AU,
+      x: 32 * AU,
+      y: 5 * AU,
       z: 0,
     },
-    speedHint: { min: 200_000, max: 800_000, recommended: 400_000 }, // Slower speeds for closer distance
+    speedHint: { min: 200_000, max: 800_000, recommended: 400_000 },
     cameraHint: 'BALL',
   },
   {
@@ -46,8 +45,8 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 1_200_000,
     startPositionMeters: {
-      x: 25 * AU,
-      y: -10 * AU,
+      x: 33 * AU,
+      y: -8 * AU,
       z: 0,
     },
     speedHint: { min: 250_000, max: 900_000, recommended: 500_000 },
@@ -60,7 +59,7 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 2_600_000,
     startPositionMeters: {
-      x: 15 * AU,
+      x: 32 * AU,
       y: 10 * AU,
       z: 0,
     },
@@ -74,8 +73,8 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 3_200_000,
     startPositionMeters: {
-      x: -18 * AU,
-      y: 12 * AU,
+      x: -32 * AU,
+      y: 8 * AU,
       z: 0,
     },
     speedHint: { min: 180_000, max: 700_000, recommended: 350_000 },
@@ -88,8 +87,8 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 4_400_000,
     startPositionMeters: {
-      x: -15 * AU,
-      y: -15 * AU,
+      x: -30 * AU,
+      y: -12 * AU,
       z: 0,
     },
     speedHint: { min: 200_000, max: 800_000, recommended: 450_000 },
@@ -102,8 +101,8 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 5_600_000,
     startPositionMeters: {
-      x: 16 * AU,
-      y: -8 * AU,
+      x: 33 * AU,
+      y: -6 * AU,
       z: 0,
     },
     speedHint: { min: 150_000, max: 600_000, recommended: 320_000 },
@@ -116,8 +115,8 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 6_900_000,
     startPositionMeters: {
-      x: 30 * AU,
-      y: 15 * AU,
+      x: 34 * AU,
+      y: 10 * AU,
       z: 0,
     },
     speedHint: { min: 300_000, max: 1_100_000, recommended: 600_000 },
@@ -130,8 +129,8 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 7_800_000,
     startPositionMeters: {
-      x: 40 * AU,
-      y: -15 * AU,
+      x: 35 * AU,
+      y: -5 * AU,
       z: 0,
     },
     speedHint: { min: 350_000, max: 1_200_000, recommended: 700_000 },
@@ -144,9 +143,9 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 9_000_000,
     startPositionMeters: {
-      x: -35 * AU,
-      y: 35 * AU,
-      z: 2 * AU,
+      x: -34 * AU,
+      y: 8 * AU,
+      z: 1 * AU,
     },
     speedHint: { min: 400_000, max: 1_500_000, recommended: 800_000 },
     cameraHint: 'BALL',

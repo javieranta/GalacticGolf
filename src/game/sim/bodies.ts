@@ -57,19 +57,18 @@ export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
 // Base orbit speed multiplier
 export const ORBIT_SPEED_MULTIPLIER = 10;
 
-// Orbit speed varies by distance - VERY SLOW inner planets, moderate outer planets
-// This creates smooth, watchable motion across the solar system
+// Orbit speed varies by distance - ALL planets orbit slowly for smooth visuals
 export function getOrbitSpeedMultiplier(semiMajorAxisAU: number): number {
-  // Inner planets: VERY slow for smooth animation
-  if (semiMajorAxisAU < 0.5) return 0.05;  // Mercury - barely moving
-  if (semiMajorAxisAU < 1) return 0.08;    // Venus
-  if (semiMajorAxisAU < 1.5) return 0.1;   // Earth
-  if (semiMajorAxisAU < 2) return 0.15;    // Mars
-  // Outer planets: half the previous speed (was too fast)
-  if (semiMajorAxisAU < 6) return 2.5;     // Jupiter zone (was 5)
-  if (semiMajorAxisAU < 12) return 7.5;    // Saturn zone (was 15)
-  if (semiMajorAxisAU < 22) return 20;     // Uranus zone (was 40)
-  return 40; // Neptune and beyond (was 80)
+  // Inner planets: very slow
+  if (semiMajorAxisAU < 0.5) return 0.02;  // Mercury
+  if (semiMajorAxisAU < 1) return 0.03;    // Venus
+  if (semiMajorAxisAU < 1.5) return 0.04;  // Earth
+  if (semiMajorAxisAU < 2) return 0.05;    // Mars
+  // Outer planets: also slow (reduced significantly)
+  if (semiMajorAxisAU < 6) return 0.5;     // Jupiter zone
+  if (semiMajorAxisAU < 12) return 1.5;    // Saturn zone
+  if (semiMajorAxisAU < 22) return 4;      // Uranus zone
+  return 8; // Neptune and beyond
 }
 
 // Visual orbit expansion - spread out inner planets for better visuals
