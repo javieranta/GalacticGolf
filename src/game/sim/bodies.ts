@@ -57,19 +57,30 @@ export const SUN_VISUAL_RADIUS_MULTIPLIER = 30;
 // Base orbit speed multiplier
 export const ORBIT_SPEED_MULTIPLIER = 10;
 
-// Orbit speed varies by distance - SLOW inner planets, FASTER outer planets
-// This creates more uniform visual motion across the solar system
+// Orbit speed varies by distance - VERY SLOW inner planets, FASTER outer planets
+// This creates smooth, watchable motion across the solar system
 export function getOrbitSpeedMultiplier(semiMajorAxisAU: number): number {
-  // Inner planets (< 2 AU): SLOW them down (they naturally orbit fast)
-  if (semiMajorAxisAU < 0.5) return 0.3;  // Mercury - very slow
-  if (semiMajorAxisAU < 1) return 0.5;    // Venus
-  if (semiMajorAxisAU < 1.5) return 0.7;  // Earth
-  if (semiMajorAxisAU < 2) return 1;      // Mars
+  // Inner planets: VERY slow for smooth animation
+  if (semiMajorAxisAU < 0.5) return 0.05;  // Mercury - barely moving
+  if (semiMajorAxisAU < 1) return 0.08;    // Venus
+  if (semiMajorAxisAU < 1.5) return 0.1;   // Earth
+  if (semiMajorAxisAU < 2) return 0.15;    // Mars
   // Outer planets: speed them up progressively
-  if (semiMajorAxisAU < 6) return 8;      // Jupiter zone
-  if (semiMajorAxisAU < 12) return 20;    // Saturn zone
-  if (semiMajorAxisAU < 22) return 50;    // Uranus zone
-  return 100; // Neptune and beyond
+  if (semiMajorAxisAU < 6) return 5;       // Jupiter zone
+  if (semiMajorAxisAU < 12) return 15;     // Saturn zone
+  if (semiMajorAxisAU < 22) return 40;     // Uranus zone
+  return 80; // Neptune and beyond
+}
+
+// Visual orbit expansion - spread out inner planets for better visuals
+// Returns multiplier for semi-major axis in RENDERING only (not physics)
+export function getVisualOrbitMultiplier(semiMajorAxisAU: number): number {
+  // Inner planets get expanded orbits for visibility
+  if (semiMajorAxisAU < 0.5) return 4;   // Mercury: 0.39 AU → ~1.6 AU visually
+  if (semiMajorAxisAU < 1) return 2.5;   // Venus: 0.72 AU → ~1.8 AU visually
+  if (semiMajorAxisAU < 1.5) return 2;   // Earth: 1 AU → 2 AU visually
+  if (semiMajorAxisAU < 2) return 1.5;   // Mars: 1.5 AU → 2.25 AU visually
+  return 1; // Outer planets: no expansion needed
 }
 
 // Sun data

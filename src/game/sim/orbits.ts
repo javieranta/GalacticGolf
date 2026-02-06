@@ -4,7 +4,7 @@
  * Computes planet positions from orbital elements using Kepler's equation
  */
 
-import { CelestialBody, SUN, PLANETS, PlanetName, ORBIT_SPEED_MULTIPLIER, getOrbitSpeedMultiplier } from './bodies';
+import { CelestialBody, SUN, PLANETS, PlanetName, ORBIT_SPEED_MULTIPLIER, getOrbitSpeedMultiplier, getVisualOrbitMultiplier } from './bodies';
 import { AU } from './units';
 
 export interface Vec3 {
@@ -172,7 +172,28 @@ export function getAllPlanetPositions(
 }
 
 /**
+ * Get VISUAL position of a celestial body (with orbit expansion for inner planets)
+ * Use this for RENDERING only - physics uses getBodyPosition
+ */
+export function getBodyVisualPosition(body: CelestialBody, t: number): Vec3 {
+  const pos = getBodyPosition(body, t);
+  
+  if (!body.orbitalElements) return pos;
+  
+  // Apply visual orbit expansion for inner planets
+  const distanceAU = body.orbitalElements.a / AU;
+  const visualMultiplier = getVisualOrbitMultiplier(distanceAU);
+  
+  return {
+    x: pos.x * visualMultiplier,
+    y: pos.y * visualMultiplier,
+    z: pos.z * visualMultiplier,
+  };
+}
+
+/**
  * Generate orbit path points for visualization
+ * Uses visual orbit expansion for inner planets
  *
  * @param body The celestial body
  * @param numPoints Number of points around the orbit
@@ -188,6 +209,10 @@ export function generateOrbitPath(
 
   const { a, e, i, omega, w } = body.orbitalElements;
   const points: Vec3[] = [];
+  
+  // Apply visual orbit expansion for inner planets
+  const distanceAU = a / AU;
+  const visualMultiplier = getVisualOrbitMultiplier(distanceAU);
 
   for (let j = 0; j <= numPoints; j++) {
     // Parametric angle around the ellipse (true anomaly values)
@@ -197,9 +222,9 @@ export function generateOrbitPath(
     // r = a(1-e²) / (1 + e*cos(ν))
     const r = (a * (1 - e * e)) / (1 + e * Math.cos(nu));
 
-    // Position in orbital plane
-    const xOrbital = r * Math.cos(nu);
-    const yOrbital = r * Math.sin(nu);
+    // Position in orbital plane (with visual expansion)
+    const xOrbital = r * Math.cos(nu) * visualMultiplier;
+    const yOrbital = r * Math.sin(nu) * visualMultiplier;
     const zOrbital = 0;
 
     // Transform to heliocentric

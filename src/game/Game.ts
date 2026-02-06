@@ -152,7 +152,7 @@ export class Game {
 
     // Update scene
     const planetPositions = updatePlanetPositions(this.simTime);
-    this.scene.updatePlanetPositions(planetPositions);
+    this.scene.updatePlanetPositions(planetPositions, this.simTime);
     this.scene.updateBallPosition(this.ball.position);
     this.scene.updateStartMarker(this.ball.position);
     this.scene.startMarker.visible = true; // Show start marker during aiming
@@ -243,7 +243,7 @@ export class Game {
 
     // Always update planet positions for display
     const planetPositions = updatePlanetPositions(this.simTime);
-    this.scene.updatePlanetPositions(planetPositions);
+    this.scene.updatePlanetPositions(planetPositions, this.simTime);
 
     // Render
     this.scene.render();

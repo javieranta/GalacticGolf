@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SUN, PLANETS, PlanetName, PLANET_NAMES, CelestialBody, VISUAL_RADIUS_MULTIPLIER, SUN_VISUAL_RADIUS_MULTIPLIER } from './sim/bodies';
-import { Vec3, generateOrbitPath } from './sim/orbits';
+import { Vec3, generateOrbitPath, getBodyVisualPosition } from './sim/orbits';
 import { toRender as unitToRender } from './sim/units';
 
 // Trail configuration
@@ -555,14 +555,20 @@ export class GameScene {
 
   // Update methods
 
-  public updatePlanetPositions(positions: Map<PlanetName, Vec3>): void {
+  public updatePlanetPositions(positions: Map<PlanetName, Vec3>, simTime?: number): void {
     for (const [name, pos] of positions) {
       const mesh = this.planetMeshes.get(name);
       if (mesh) {
+        // Use visual positions (expanded inner orbits) if simTime provided
+        const planet = PLANETS[name];
+        const visualPos = simTime !== undefined 
+          ? getBodyVisualPosition(planet, simTime)
+          : pos;
+        
         mesh.position.set(
-          unitToRender(pos.x),
-          unitToRender(pos.z), // swap y/z for Three.js coordinate system
-          unitToRender(pos.y)
+          unitToRender(visualPos.x),
+          unitToRender(visualPos.z), // swap y/z for Three.js coordinate system
+          unitToRender(visualPos.y)
         );
       }
     }
@@ -770,22 +776,22 @@ export class GameScene {
   }
 
   public followBall(): void {
-    // DEBUG: Disable OrbitControls completely and set camera manually
-    this.controls.enabled = false;
-
+    // Keep controls enabled - don't jarring change the view!
+    // Just smoothly update the target to track the ball
     const shipPos = this.ballMesh.position;
-
-    // Debug camera info occasionally
-    if (Math.random() < 0.02) {
-      console.log('=== CAMERA DEBUG ===');
-      console.log('Ship mesh position:', shipPos.toArray().map(v => v.toFixed(0)));
-      console.log('Camera position:', this.camera.position.toArray().map(v => v.toFixed(0)));
-    }
-
-    // Set camera to fixed position looking at origin
-    // This way we should clearly see the ship moving toward sun
-    this.camera.position.set(0, 15000, 15000); // High above, looking down
-    this.camera.lookAt(0, 0, 0); // Look at sun/origin
+    
+    // Smoothly look at a point between ship and sun (60% toward ship)
+    const targetX = shipPos.x * 0.6;
+    const targetY = shipPos.y * 0.6;
+    const targetZ = shipPos.z * 0.6;
+    
+    // Smooth interpolation toward target (lerp factor)
+    const lerp = 0.05;
+    this.controls.target.x += (targetX - this.controls.target.x) * lerp;
+    this.controls.target.y += (targetY - this.controls.target.y) * lerp;
+    this.controls.target.z += (targetZ - this.controls.target.z) * lerp;
+    
+    this.controls.update();
   }
 
   // Rendering

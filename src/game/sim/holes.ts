@@ -22,6 +22,7 @@ export interface HoleDef {
 
 // Speed hints in m/s (divide by 1000 to get km/s)
 // Boosted 5x for faster, more exciting gameplay
+// Starting positions MUCH closer for better visuals and less empty space
 export const HOLES: HoleDef[] = [
   {
     id: 1,
@@ -29,13 +30,13 @@ export const HOLES: HoleDef[] = [
     target: 'Jupiter',
     par: 2,
     timeOffsetSeconds: 0,
-    // Start from outside solar system (Neptune is at 30 AU)
+    // Closer start - just outside Jupiter's orbit
     startPositionMeters: {
-      x: 60 * AU,
-      y: 20 * AU,
+      x: 20 * AU,
+      y: 8 * AU,
       z: 0,
     },
-    speedHint: { min: 500_000, max: 2_000_000, recommended: 1_000_000 }, // 500-2000 km/s
+    speedHint: { min: 200_000, max: 800_000, recommended: 400_000 }, // Slower speeds for closer distance
     cameraHint: 'BALL',
   },
   {
@@ -45,11 +46,11 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 1_200_000,
     startPositionMeters: {
-      x: 70 * AU,
-      y: -25 * AU,
+      x: 25 * AU,
+      y: -10 * AU,
       z: 0,
     },
-    speedHint: { min: 600_000, max: 2_250_000, recommended: 1_250_000 },
+    speedHint: { min: 250_000, max: 900_000, recommended: 500_000 },
     cameraHint: 'BALL',
   },
   {
@@ -59,11 +60,11 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 2_600_000,
     startPositionMeters: {
-      x: 50 * AU,
-      y: 30 * AU,
+      x: 15 * AU,
+      y: 10 * AU,
       z: 0,
     },
-    speedHint: { min: 400_000, max: 1_750_000, recommended: 900_000 },
+    speedHint: { min: 150_000, max: 600_000, recommended: 300_000 },
     cameraHint: 'BALL',
   },
   {
@@ -73,11 +74,11 @@ export const HOLES: HoleDef[] = [
     par: 3,
     timeOffsetSeconds: 3_200_000,
     startPositionMeters: {
-      x: -55 * AU,
-      y: 35 * AU,
+      x: -18 * AU,
+      y: 12 * AU,
       z: 0,
     },
-    speedHint: { min: 500_000, max: 2_000_000, recommended: 1_100_000 },
+    speedHint: { min: 180_000, max: 700_000, recommended: 350_000 },
     cameraHint: 'BALL',
   },
   {
@@ -87,11 +88,11 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 4_400_000,
     startPositionMeters: {
-      x: -45 * AU,
-      y: -50 * AU,
+      x: -15 * AU,
+      y: -15 * AU,
       z: 0,
     },
-    speedHint: { min: 600_000, max: 2_500_000, recommended: 1_400_000 },
+    speedHint: { min: 200_000, max: 800_000, recommended: 450_000 },
     cameraHint: 'BALL',
   },
   {
@@ -101,11 +102,11 @@ export const HOLES: HoleDef[] = [
     par: 2,
     timeOffsetSeconds: 5_600_000,
     startPositionMeters: {
-      x: 55 * AU,
-      y: -20 * AU,
+      x: 16 * AU,
+      y: -8 * AU,
       z: 0,
     },
-    speedHint: { min: 450_000, max: 1_900_000, recommended: 1_000_000 },
+    speedHint: { min: 150_000, max: 600_000, recommended: 320_000 },
     cameraHint: 'BALL',
   },
   {
@@ -115,11 +116,11 @@ export const HOLES: HoleDef[] = [
     par: 4,
     timeOffsetSeconds: 6_900_000,
     startPositionMeters: {
-      x: 80 * AU,
-      y: 40 * AU,
+      x: 30 * AU,
+      y: 15 * AU,
       z: 0,
     },
-    speedHint: { min: 700_000, max: 2_750_000, recommended: 1_600_000 },
+    speedHint: { min: 300_000, max: 1_100_000, recommended: 600_000 },
     cameraHint: 'BALL',
   },
   {
@@ -129,11 +130,11 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 7_800_000,
     startPositionMeters: {
-      x: 100 * AU,
-      y: -35 * AU,
+      x: 40 * AU,
+      y: -15 * AU,
       z: 0,
     },
-    speedHint: { min: 800_000, max: 3_000_000, recommended: 1_800_000 },
+    speedHint: { min: 350_000, max: 1_200_000, recommended: 700_000 },
     cameraHint: 'BALL',
   },
   {
@@ -143,11 +144,11 @@ export const HOLES: HoleDef[] = [
     par: 5,
     timeOffsetSeconds: 9_000_000,
     startPositionMeters: {
-      x: -80 * AU,
-      y: 90 * AU,
-      z: 5 * AU,
+      x: -35 * AU,
+      y: 35 * AU,
+      z: 2 * AU,
     },
-    speedHint: { min: 1_000_000, max: 4_000_000, recommended: 2_500_000 },
+    speedHint: { min: 400_000, max: 1_500_000, recommended: 800_000 },
     cameraHint: 'BALL',
   },
 ];
